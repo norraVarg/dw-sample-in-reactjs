@@ -4,6 +4,11 @@
     margin: 0 auto;
 }
 
+.product-amount {
+    margin: 30px auto;
+    font-size: small;
+}
+
 .product-card {
     margin: 10px;
 }

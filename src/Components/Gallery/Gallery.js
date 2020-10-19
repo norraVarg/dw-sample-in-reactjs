@@ -14,13 +14,16 @@ const Gallery = () => {
     }, []);
 
     return (
-        <div className='gallery'>
-            {
-                products.length ?
-                products.map(product => <ProductCard key={product.id} id = {product.id}></ProductCard>) :
-                null
-            }
-        </div>
+        <>
+            <div className='product-amount'>{products.length} Products</div>
+            <div className='gallery'>
+                {
+                    products.length ?
+                    products.map(product => <ProductCard key={product.id} id = {product.id}></ProductCard>) :
+                    null
+                }
+            </div>
+        </>
     );
 }
 
