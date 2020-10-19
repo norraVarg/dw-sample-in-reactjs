@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './ProductCard.css'
+import ProductDetails from '../ProductDetails/ProductDetails';
 
 const ProductCard = (props) => {
     const [product, setProductInfo] = useState({});
     const [assets, setAssets] = useState({});
+    const [detailsVisibility, setDetailsVisibility] = useState(false);
 
     const getProductInfo = (data) => {
         const productInfo = {};
@@ -13,12 +15,16 @@ const ProductCard = (props) => {
             productInfo[n] = v;
         }
 
-        console.log('productInfo: ', productInfo);
         return productInfo;
     }
 
-    const handleClick = () => {
-        console.log('clicked');
+    const showProductDetails = () => {
+        setDetailsVisibility(true);
+    }
+
+    const hideProductDetails = (e) => {
+        e.stopPropagation();
+        setDetailsVisibility(false);
     }
 
     useEffect(() => {
@@ -37,7 +43,8 @@ const ProductCard = (props) => {
     }, [props.id]);
 
     return (
-        <div className='product-card' onClick={handleClick} style={{backgroundImage: `url(${assets.data?.data.uri})`}}>
+        <div className='product-card' onClick={showProductDetails} style={{backgroundImage: `url(${assets.data?.data.uri})`}}>
+            {detailsVisibility && <ProductDetails hideProductDetails={hideProductDetails} productDetails={{...product, uri: assets.data?.data.uri}}></ProductDetails>}
             <span className='product-name'>{product.data?.name}</span>
             <span className='product-price'>${product.data?.price.value}</span>
         </div>
