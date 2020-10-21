@@ -1,21 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+
 import './ProductCard.css'
 import ProductDetails from '../ProductDetails/ProductDetails';
 
 const ProductCard = (props) => {
-    const [product, setProductInfo] = useState({});
+    const [productDetails, setProductDetails] = useState({});
     const [assets, setAssets] = useState({});
     const [detailsVisibility, setDetailsVisibility] = useState(false);
 
-    const getProductInfo = (data) => {
-        const productInfo = {};
+    const extractProductDetails = (data) => {
+        const productDetails = {};
+        data.forEach(({name: n, value: v}) => productDetails[n] = v);
 
-        for (const {name: n, value: v} of data) {
-            productInfo[n] = v;
-        }
-
-        return productInfo;
+        return productDetails;
     }
 
     const showProductDetails = () => {
@@ -30,10 +28,10 @@ const ProductCard = (props) => {
     useEffect(() => {
         axios.get(`https://dev-api.danielwellington.com/frontend/products/${props.id}`)
             .then(product => {
-                const productInfo = getProductInfo(product.data.data.elements);
-                setProductInfo({data: productInfo});
+                const productDetails = extractProductDetails(product.data.data.elements);
+                setProductDetails(productDetails);
 
-                axios.get(`https://dev-api.danielwellington.com/frontend/assets/${productInfo.main_image.id}`)
+                axios.get(`https://dev-api.danielwellington.com/frontend/assets/${productDetails.main_image.id}`)
                     .then(assets => {
                         setAssets(assets);
                     })
@@ -44,9 +42,9 @@ const ProductCard = (props) => {
 
     return (
         <div className='product-card' onClick={showProductDetails} style={{backgroundImage: `url(${assets.data?.data.uri})`}}>
-            {detailsVisibility && <ProductDetails hideProductDetails={hideProductDetails} productDetails={{...product, uri: assets.data?.data.uri}}></ProductDetails>}
-            <span className='product-name'>{product.data?.name}</span>
-            <span className='product-price'>${product.data?.price.value}</span>
+            {detailsVisibility && <ProductDetails hideProductDetails={hideProductDetails} productDetails={{...productDetails, uri: assets.data?.data.uri}} />}
+            <span className='product-name'>{productDetails.name}</span>
+            <span className='product-price'>${productDetails.price?.value}</span>
         </div>
     );
 }
